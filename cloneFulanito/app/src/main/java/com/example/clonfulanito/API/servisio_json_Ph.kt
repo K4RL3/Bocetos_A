@@ -12,7 +12,8 @@ object InstanciaRetroFitJSON_PH{
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
+    // Lazy es un constructor que solo va a crear el objeto cuando sea solicitado y no desde un inicio. PAra evitar tener
+    // muchas cosas en la llamadas generales.
     val consumirServicio: FulanitoAPIServicio by lazy {
         servicio.create(FulanitoAPIServicio::class.java )
     }

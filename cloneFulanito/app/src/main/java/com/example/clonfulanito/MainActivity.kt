@@ -19,6 +19,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.clonfulanito.modelo.Publicacion
+import com.example.clonfulanito.ui.navegacion.MenuPrinicpal
+import com.example.clonfulanito.ui.navegacion.PantallaMenuPrincipal
+import com.example.clonfulanito.ui.pantallas.PantallaNavegadora
 import com.example.clonfulanito.ui.theme.ClonFulanitoTheme
 import com.example.clonfulanito.vistas_modelos.FulanitoVM
 
@@ -30,41 +33,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ClonFulanitoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    PantallaDePublic(vm_fulanito = modelo_app)
-                }
+              MenuPrinicpal(modifier = Modifier.fillMaxSize())
             }
         }
     }
 }
 
-@Composable
-fun PantallaDePublic(vm_fulanito: FulanitoVM){
-    val publicaciones_descargadas by vm_fulanito.publicaciones.observeAsState(emptyList())
-
-    LaunchedEffect(Unit) {
-       vm_fulanito.descargar_todas_public()
-    }
-
-    Column {
-        if(publicaciones_descargadas.isEmpty()){
-            Text("Aqui deberia de colocar una barra de cargando")
-        }
-        else{
-            LazyColumn {
-                items(publicaciones_descargadas){ publicacion ->
-                    Text("Titulo: ${publicacion.title}")
-                    Text("${publicacion.body}")
-                    HorizontalDivider()
-                }
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     ClonFulanitoTheme {
+        MenuPrinicpal(modifier = Modifier.fillMaxSize())
     }
 }
