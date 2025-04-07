@@ -45,12 +45,12 @@ fun PantallaNavesEspaciales(modifier: Modifier){
             Row {
                 Text("pagina Anterior",
                     modifier = Modifier.clickable {
-                        Log.v("STARWARS", "pag siguiete de naves")
+                        vm_swapi.pasar_a_sig_pag()
                     }
                 )
                 Text("pagina Sigiente",
                     modifier = Modifier.clickable {
-                        Log.v("STARWARS", "pag anterior de naves")
+                        vm_swapi.pasar_a_ant_pag()
                     }
                 )
             }
