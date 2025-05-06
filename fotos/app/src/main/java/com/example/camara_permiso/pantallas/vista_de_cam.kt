@@ -1,7 +1,9 @@
-package com.example.camara_permiso.pantallas
+    package com.example.camara_permiso.pantallas
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Audio.Media
@@ -13,56 +15,133 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import com.example.camara_permiso.R
 import java.lang.reflect.Modifier
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import androidx.compose.material3.Icon
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
 
-@Composable
-fun PantallaCam(){
-    val lente_usado = CameraSelector.LENS_FACING_BACK
-    val ciclo_vida_dueño = LocalLifecycleOwner.current
+    @Composable
+    fun PantallaCam() {
+        var lente_usado by remember { mutableStateOf(CameraSelector.LENS_FACING_BACK) }
+        val ciclo_vida_dueño = LocalLifecycleOwner.current
+        val contexto = LocalContext.current
 
-    val contexto = LocalContext.current
+        val prevista = Preview.Builder().build()
+        val vista_prev = remember { PreviewView(contexto) }
+        val capturador_de_imagen = remember { ImageCapture.Builder().build() }
 
-    val prevista = Preview.Builder().build()
-    val vista_prev = remember {
-        PreviewView(contexto)
-    }
+        // Alternar entre cámara delantera y trasera
+        fun alternarCamara() {
+            lente_usado = if (lente_usado == CameraSelector.LENS_FACING_BACK) {
+                CameraSelector.LENS_FACING_FRONT
+            } else {
+                CameraSelector.LENS_FACING_BACK
+            }
+        }
+        // Abre la galeria
+        fun abrirGaleria(contexto: Context) {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                type = "image/*"
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            contexto.startActivity(intent)
+        }
 
-    val camarax_selector = CameraSelector.Builder().requireLensFacing(lente_usado).build()
+        LaunchedEffect(lente_usado) {
+            val proveedor_local_camara = contexto.obtenerProvedorDeCamara()
+            proveedor_local_camara.unbindAll()
 
-    val capturador_de_imagen = remember { ImageCapture.Builder().build() }
+            val camarax_selector = CameraSelector.Builder().requireLensFacing(lente_usado).build()
+            proveedor_local_camara.bindToLifecycle(ciclo_vida_dueño, camarax_selector, prevista, capturador_de_imagen)
 
-    LaunchedEffect(lente_usado) {
-        val proveedor_local_camara = contexto.obtenerProvedorDeCamara()
-        proveedor_local_camara.unbindAll()
+            prevista.setSurfaceProvider(vista_prev.surfaceProvider)
+        }
 
-        proveedor_local_camara.bindToLifecycle(ciclo_vida_dueño, camarax_selector,prevista, capturador_de_imagen)
+        Box(contentAlignment = Alignment.BottomCenter) {
+            AndroidView(factory = { vista_prev }, modifier = androidx.compose.ui.Modifier.fillMaxSize())
 
-        prevista.setSurfaceProvider(vista_prev.surfaceProvider)
-    }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-    Box(contentAlignment = Alignment.BottomCenter){
-        AndroidView(factory = { vista_prev }, modifier = androidx.compose.ui.Modifier.fillMaxSize())
+                Button(
+                    onClick = { abrirGaleria(contexto) },
+                    modifier = androidx.compose.ui.Modifier
+                        .weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.galeria_foreground),
+                        contentDescription = "Abrir Galería")
+                }
 
-        Button(onClick = {tomar_foto(capturador_de_imagen, contexto)}) {
-            Text("hola mundo")
+                androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.width(16.dp))
+
+                Button(
+                    onClick = { tomar_foto(capturador_de_imagen, contexto) },
+                    modifier = androidx.compose.ui.Modifier
+                        .weight(2f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    shape = CircleShape
+                ){
+                    Icon(
+                        painter = painterResource(id = R.mipmap.camara_foreground),
+                        contentDescription = "Tomar Foto"
+                    )
+                }
+
+                androidx.compose.foundation.layout.Spacer(modifier = androidx.compose.ui.Modifier.width(16.dp))
+
+                Button(
+                    onClick = { alternarCamara() },
+                    modifier = androidx.compose.ui.Modifier
+                        .weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.mipmap.voltear_foreground),
+                        contentDescription = "Cambiar Cámara"
+                    )
+                }
+            }
         }
     }
-
-
-}
 
 
 
@@ -106,4 +185,5 @@ private fun tomar_foto(capturador_img: ImageCapture, contexto: Context){
 
         }
     )
+
 }
