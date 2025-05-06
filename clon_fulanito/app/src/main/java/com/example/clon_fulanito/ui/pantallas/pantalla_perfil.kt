@@ -1,13 +1,7 @@
 package com.example.clon_fulanito.ui.pantallas
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
@@ -19,41 +13,72 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.clon_fulanito.ui.theme.*
 
 @Composable
-fun PantallaPerfil(modifier: Modifier = Modifier){
+fun PantallaPerfil(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp).background(Color.LightGray),
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        FondoEstelar, // Negro absoluto
+                        EspacioOscuro, // Azul oscuro profundo
+                        EspacioPúrpura // Púrpura oscuro
+                    )
+                )
+            )
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ){
-        Icon(imageVector = Icons.Filled.AccountCircle,
+        verticalArrangement = Arrangement.Top // Centrado en la parte superior
+    ) {
+        // Icono de perfil
+        Icon(
+            imageVector = Icons.Filled.AccountCircle,
             contentDescription = "Icono de perfil",
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.secondary
+            modifier = Modifier
+                .size(100.dp)
+                .padding(top = 16.dp),
+            tint = DoradoGalactico // Dorado brillante
         )
 
-        Text(text = "Usuario", style = TextStyle(
-            fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface
-        ))
+        // Nombre de usuario
+        Text(
+            text = "Usuario",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            ),
+            color = EstrellaBrillante, // Blanco brillante
+            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+        )
 
+        // Tarjeta de información de contacto
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(color = FondoEstelar.copy(alpha = 0.8f))
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // Título de la tarjeta
                 Text(
                     text = "Información de Contacto",
-                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = DoradoGalactico // Plateado brillante
                 )
 
+                // Correo electrónico
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -61,11 +86,16 @@ fun PantallaPerfil(modifier: Modifier = Modifier){
                     Icon(
                         imageVector = Icons.Filled.Email,
                         contentDescription = "Correo Electrónico",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = DoradoGalactico // Azul brillante
                     )
-                    Text("perfil123@gmail.com")
+                    Text(
+                        text = "perfil_fulanito@gmail.com",
+                        color = GrisMetalico, // Gris metálico
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
 
+                // Ubicación
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -73,9 +103,13 @@ fun PantallaPerfil(modifier: Modifier = Modifier){
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
                         contentDescription = "Ubicación",
-                        tint = MaterialTheme.colorScheme.secondary
+                        tint = DoradoGalactico // Verde brillante
                     )
-                    Text("El Paso, Texas")
+                    Text(
+                        text = "Una galaxia muy, muy lejana",
+                        color = GrisMetalico, // Gris metálico
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }

@@ -5,9 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.clon_fulanito.ui.theme.*
 import com.example.clon_fulanito.vista_moddelos.FulanitoViewModel
@@ -72,22 +73,22 @@ fun PantallaDePublicaciones(modifier: Modifier, vm_fulanito: FulanitoViewModel, 
                                 navegar_siguiente()
                             }
                             .padding(15.dp)
-                            .background(color = EspacioClaro) // Gris azulado
+                            .clip(RoundedCornerShape(12.dp)) // Esquinas redondeadas
+                            .background(color = FondoEstelar.copy(alpha = 0.6f)) // Fondo semitransparente
                             .padding(10.dp)
                     ) {
                         Text(
                             "Título: ${publicacion.title}",
-                            color = SableLuzAzul, // Azul brillante
-                            style = MaterialTheme.typography.titleMedium
+                            color = EstrellaBrillante, // Blanco brillante
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             "Publicación: ${publicacion.body}",
-                            color = NebulosaRosa, // Rosa brillante
+                            color = GrisMetalico, // Gris metálico
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        HorizontalDivider(color = GrisMetalico) // Gris metálico
                     }
                 }
             }

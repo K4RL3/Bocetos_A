@@ -72,7 +72,6 @@ fun MenuPrincipal(modifier: Modifier){
 
             composable(PantallaMenuPrincipal.Home.ruta) {
                 PantallaNavegadora(modifier = Modifier.fillMaxSize(), vm_fulanito = vm_fulanito)
-                //Text("Hola pantalla A")
             }
 
             composable(PantallaMenuPrincipal.StarWars.ruta) {
@@ -80,7 +79,6 @@ fun MenuPrincipal(modifier: Modifier){
             }
 
             composable(PantallaMenuPrincipal.Perfil.ruta) {
-                //Text("Hola de Perfil")
                 PantallaPerfil(modifier = Modifier.fillMaxSize())
             }
         }
@@ -94,36 +92,3 @@ fun prevista(){
     MenuPrincipal(Modifier.fillMaxSize())
 }
 
-/*
-Text("Hola mundo", modifier = Modifier.clickable{
-    control_navegacion.navigate(PantallaMenuPrincipal.Home.ruta){
-        popUpTo(control_navegacion.graph.startDestinationId){
-            saveState = true
-        }
-
-        launchSingleTop = true
-        restoreState = true
-    }
-})
-
-Text("Swapi", modifier = Modifier.clickable{
-    control_navegacion.navigate(PantallaMenuPrincipal.StarWars.ruta){
-        popUpTo(control_navegacion.graph.startDestinationId){
-            saveState = true
-        }
-
-        launchSingleTop = true
-        restoreState = true
-    }
-})
-
-Text("Perfil", modifier = Modifier.clickable{
-    control_navegacion.navigate(PantallaMenuPrincipal.Perfil.ruta){
-        popUpTo(control_navegacion.graph.startDestinationId){
-            saveState = true
-        }
-
-        launchSingleTop = true
-        restoreState = true
-    }
-})*/
