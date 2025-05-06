@@ -10,3 +10,5 @@ object PantallaPublicacion
 
 @Serializable
 object PantallaPerfil
+
+

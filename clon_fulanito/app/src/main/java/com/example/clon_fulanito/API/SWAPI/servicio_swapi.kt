@@ -3,7 +3,7 @@ package com.example.clon_fulanito.API.SWAPI
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object InstanciaRetroFitSWAPI{
+object InstanciaRetrofitSWAPI{
     private const val url_base = "https://swapi.dev/api/"
 
     private val servicio: Retrofit by lazy {
@@ -13,9 +13,9 @@ object InstanciaRetroFitSWAPI{
             .build()
     }
 
-    // Lazy es un constructor que solo va a crear el objeto cuando sea solicitado y no desde un inicio. PAra evitar tener
-    // muchas cosas en la llamadas generales.
-    val consumir_servicio: SWAPIInterfaz by lazy {
-        servicio.create(SWAPIInterfaz::class.java)
+    // Lazy es un constructor que solo va a crear el objeto cuando sea solicitado y no desde un inicio. Para evitar tener
+    //muchas cosas en la llamadas generales.
+    val consumir_servicio: SWAPIinterfaz by lazy {
+        servicio.create(SWAPIinterfaz::class.java)
     }
 }

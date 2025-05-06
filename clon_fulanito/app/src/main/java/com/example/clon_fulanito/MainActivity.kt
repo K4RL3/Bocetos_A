@@ -6,11 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,11 +25,10 @@ import androidx.compose.ui.unit.dp
 import com.example.clon_fulanito.ui.pantallas.PantallaNavegadora
 import com.example.clon_fulanito.ui.pantallas.navegacion.MenuPrincipal
 import com.example.clon_fulanito.ui.theme.Clon_fulanitoTheme
-import com.example.clon_fulanito.vista_modelos.FulanitoViewModel
+import com.example.clon_fulanito.vista_moddelos.FulanitoViewModel
 
 class MainActivity : ComponentActivity() {
     private val modelo_app = FulanitoViewModel()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,14 +41,12 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     Clon_fulanitoTheme {
         Clon_fulanitoTheme {
-            MenuPrincipal(modifier = Modifier.fillMaxSize())
+            MenuPrincipal(Modifier.fillMaxSize())
         }
     }
 }

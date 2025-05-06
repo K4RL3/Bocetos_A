@@ -1,5 +1,4 @@
-package com.example.clon_fulanito.vista_modelos
-
+package com.example.clon_fulanito.vista_moddelos
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -11,7 +10,7 @@ import com.example.clon_fulanito.modelos.Comentario
 import com.example.clon_fulanito.modelos.Publicacion
 import kotlinx.coroutines.launch
 
-class FulanitoViewModel: ViewModel() {
+class FulanitoViewModel: ViewModel(){
     private val repositorio_de_datos = RepositorioFulanito()
 
     private val _publicaciones = MutableLiveData<List<Publicacion>>()
@@ -23,38 +22,38 @@ class FulanitoViewModel: ViewModel() {
     private val _comentarios_de_publicacion = MutableLiveData<List<Comentario>>()
     val comentarios_de_publicacion: LiveData<List<Comentario>> = _comentarios_de_publicacion
 
-    fun descargar_todas_las_publicaciones() {
-        // Aqui estan las corutinas
-        viewModelScope.launch {
-            try {
+    fun descargar_todas_las_publicaciones(){
+        //Aqui estan las corutinas
+        viewModelScope.launch{
+            try{
                 val publicaciones_obtenidas = repositorio_de_datos.obtener_publicaciones()
                 _publicaciones.value = publicaciones_obtenidas
             }
-            catch (error: Exception) {
-                Log.v("DESCARGA DE PUBLICACIONES", "${error.message}")
+            catch(error: Exception){
+                Log.v("DESCARGAR DE PUBLICACIONES", "${error.message}")
             }
         }
     }
 
-    fun descargar_los_comentarios_de() {
-        // Aqui estan las corutinas
-        viewModelScope.launch {
-            try {
-                if (publicacion_seleccionada.value != null){
+    fun descargar_los_comentarios_de(){
+        //Aqui estan las corutinas
+        viewModelScope.launch{
+            try{
+                if(publicacion_seleccionada.value != null){
                     val comentarios_descargados = repositorio_de_datos.obtener_comentarios_en_publicacion(
                         publicacion_seleccionada.value!!.id)
                     _comentarios_de_publicacion.value = comentarios_descargados
                 }
             }
-            catch (error: Exception) {
-                Log.v("DESCARGA DE PUBLICACIONES", "${error.message}")
+            catch(error: Exception){
+                Log.v("DESCARGAR DE PUBLICACIONES", "${error.message}")
             }
         }
     }
 
     fun seleccionar_publicacion(id: Int): Boolean{
         if(publicaciones.value == null){
-            Log.v("VAMOOOOOSSS", "que aqui parece estar el error")
+            Log.v("VAMOOOOOOSSSS", "que aqui parece esyar el error")
             return false
         }
         for(publicacion in publicaciones.value!!){

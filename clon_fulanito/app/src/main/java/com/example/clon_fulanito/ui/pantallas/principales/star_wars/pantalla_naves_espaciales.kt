@@ -1,59 +1,213 @@
 package com.example.clon_fulanito.ui.pantallas.principales.star_wars
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorManager
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.provider.FontsContractCompat.Columns
-import com.example.clon_fulanito.vista_modelos.SWAPImodelo
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.clon_fulanito.ui.theme.*
+import com.example.clon_fulanito.vista_moddelos.Estados
+import com.example.clon_fulanito.vista_moddelos.SWAPIModelo
+import kotlin.math.abs
 
 @Composable
-fun PantallaNavesEspaciales(modifier: Modifier){
-   val vm_swapi = SWAPImodelo()
-
+fun PantallaNavesEspaciales(modifier: Modifier, vm_swapi: SWAPIModelo) {
     val pagina_actual by vm_swapi.pagina_actual.observeAsState(null)
+    val estado_de_swapi by vm_swapi.estado_actual.observeAsState(Estados.cargando)
+    val mensaje by vm_swapi.mensaje.observeAsState("")
 
-    LaunchedEffect(UInt) {
-        vm_swapi.descargar_pag()
+    val contexto = LocalContext.current
+    val contador = remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        vm_swapi.descargar_pagina(3)
     }
 
-    Column(modifier =modifier) {
-        if (pagina_actual == null){
-            Text("CARGADO")
-        }
-        else{
-            Text("Resultados")
+    DisposableEffect(Unit) {
+        val manejador_de_sensor = contexto.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val agitamiento_sensor = manejador_de_sensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val sensibilidad = 20
 
-            LazyColumn {
-                items(pagina_actual!!.results){nave_espacial ->
-                    Text("Nave: ${nave_espacial.name}")
-                    Text("Modelo: ${nave_espacial.model}")
-                    HorizontalDivider()
+        val escucha = object : android.hardware.SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event != null) {
+                    val eje_x = event.values[0]
+                    val eje_y = event.values[1]
+                    val eje_z = event.values[2]
 
+                    val sumatoria_de_ejes = abs(eje_x) + abs(eje_y) + abs(eje_z)
+                    if (sumatoria_de_ejes > sensibilidad) {
+                        Log.v("Deteccion de Terremotos", "Terremoto de ${sumatoria_de_ejes} grados total")
+                        if (estado_de_swapi == Estados.error && contador.value > 15) {
+                            vm_swapi.indicar_un_problema()
+                        }
+                        contador.value = contador.value + 1
+                    }
                 }
             }
 
-            Row {
-                Text("pagina Anterior",
-                    modifier = Modifier.clickable {
-                        vm_swapi.pasar_a_sig_pag()
-                    }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+
+        manejador_de_sensor.registerListener(escucha, agitamiento_sensor, SensorManager.SENSOR_DELAY_NORMAL)
+
+        onDispose {
+            manejador_de_sensor.unregisterListener(escucha)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        FondoEstelar, // Negro absoluto
+                        EspacioOscuro, // Azul oscuro profundo
+                        EspacioPúrpura // Púrpura oscuro
+                    )
                 )
-                Text("pagina Sigiente",
-                    modifier = Modifier.clickable {
-                        vm_swapi.pasar_a_ant_pag()
+            )
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            when (estado_de_swapi) {
+                Estados.cargando -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = SableLuzAzul, // Azul brillante
+                        trackColor = GrisOscuro
+                    )
+                    Text(
+                        "Cargando datos...",
+                        color = EstrellaBrillante,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                Estados.mostrando_lista_de_naves -> {
+                    Text(
+                        "Resultados (${contador.value})",
+                        color = EstrellaBrillante,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        items(pagina_actual!!.results) { nave_espacial ->
+                            Text("Nave: ${nave_espacial.name}", color = SableLuzAzul, style = MaterialTheme.typography.bodyLarge)
+                            Text("Modelo: ${nave_espacial.model}", color = NebulosaRosa, style = MaterialTheme.typography.bodyMedium)
+                            HorizontalDivider(color = GrisMetalico)
+                        }
                     }
-                )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Página anterior",
+                            modifier = Modifier.clickable {
+                                vm_swapi.pasar_a_anterior_pagina()
+                            },
+                            color = SableLuzVerde,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Text(
+                            "Página siguiente",
+                            modifier = Modifier.clickable {
+                                vm_swapi.pasar_a_siguiente_pagina()
+                            },
+                            color = SableLuzRojo,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
+                Estados.error -> {
+                    Text(
+                        "Error: La información no está disponible.",
+                        color = SableLuzRojo,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        "Detalles técnicos: $mensaje",
+                        color = NebulosaRosa,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Button(
+                        onClick = { vm_swapi.descargar_pagina() },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = GrisOscuro,
+                            contentColor = EstrellaBrillante
+                        )
+                    ) {
+                        Text("Recargar")
+                    }
+                }
+
+                Estados.registrar_frustracion -> {
+                    Text(
+                        "Agitar tu teléfono no resolverá el problema.",
+                        color = EstrellaBrillante,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        "Intenta agitarlo más fuerte unas 500 veces.",
+                        color = SableLuzAzul,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "Veces agitado: ${contador.value}",
+                        color = SableLuzVerde,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                else -> {}
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun prevista() {
+    PantallaNavesEspaciales(modifier = Modifier.fillMaxSize(), vm_swapi = SWAPIModelo())
 }
